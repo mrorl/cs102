@@ -11,7 +11,16 @@ def encrypt_caesar(plaintext):
     >>> encrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
+    n = 0
+    ciphertext = ''
+    while n < len(plaintext):
+        a = ord(plaintext[n])
+        if 88 <= a <= 90 or 120 <= a <= 122:
+            a -= 23
+        elif 65 <= a <= 87 or 97 <= a <= 119:
+            a += 3
+        n += 1
+        ciphertext += chr(a)
     return ciphertext
 
 
@@ -28,5 +37,14 @@ def decrypt_caesar(ciphertext):
     >>> decrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
+    n = 0
+    plaintext = ''
+    while n < len(ciphertext):
+        a = ord(ciphertext[n])
+        if 65 <= a <= 67 or 97 <= a <= 99:
+            a += 23
+        elif 68 <= a <= 90 or 100 <= a <= 122:
+            a -= 3
+        n += 1
+        plaintext += chr(a)
     return plaintext
