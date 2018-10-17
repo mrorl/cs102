@@ -45,7 +45,7 @@ def gcd(a: int, b: int) -> int:
     return gcd
 
 
-def multiplicative_inverse(e: int, phi: int):
+def multiplicative_inverse(e: int, phi: int) -> int:
     """
     Euclid's extended algorithm for finding the multiplicative
     inverse of two numbers.
@@ -55,7 +55,7 @@ def multiplicative_inverse(e: int, phi: int):
     """
     def gcd2(a: int, b: int):
         if b == 0:
-            return a,1,0
+            return a, 1, 0
         else:
             d, x, y = gcd2(b, a % b)
             return d, y, x - y * (a // b)
@@ -63,7 +63,7 @@ def multiplicative_inverse(e: int, phi: int):
     return x % phi
 
 
-def generate_keypair(p: int, q: int):
+def generate_keypair(p: int, q: int) -> int:
     if not (is_prime(p) and is_prime(q)):
         raise ValueError('Both numbers must be prime.')
     elif p == q:
@@ -92,7 +92,7 @@ def generate_keypair(p: int, q: int):
     return ((e, n), (d, n))
 
 
-def encrypt(pk: int, plaintext: str):
+def encrypt(pk: int, plaintext: str) -> bytearray:
     # Unpack the key into it's components
     key, n = pk
     # Convert each letter in the plaintext to numbers based on
@@ -102,7 +102,7 @@ def encrypt(pk: int, plaintext: str):
     return cipher
 
 
-def decrypt(pk: int, ciphertext: str):
+def decrypt(pk: int, ciphertext: str) -> str:
     # Unpack the key into its components
     key, n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
