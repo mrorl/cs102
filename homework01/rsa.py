@@ -92,7 +92,7 @@ def generate_keypair(p: int, q: int) -> int:
     return ((e, n), (d, n))
 
 
-def encrypt(pk: int, plaintext: str) -> bytearray:
+def encrypt(pk: int, plaintext: str) -> str:
     # Unpack the key into it's components
     key, n = pk
     # Convert each letter in the plaintext to numbers based on
