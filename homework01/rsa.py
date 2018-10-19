@@ -92,10 +92,9 @@ def generate_keypair(p: int, q: int) -> tuple:
     return ((e, n), (d, n))
 
 
-def encrypt(pk: int, plaintext: str) -> list:
+def encrypt(pk: tuple, plaintext: str) -> list:
     # Unpack the key into it's components
-    key = pk
-    n = pk
+    key, n = pk
     # Convert each letter in the plaintext to numbers based on
     # the character using a^b mod m
     cipher = [(ord(char) ** key) % n for char in plaintext]
@@ -103,10 +102,9 @@ def encrypt(pk: int, plaintext: str) -> list:
     return cipher
 
 
-def decrypt(pk: int, ciphertext: list) -> str:
+def decrypt(pk: tuple, ciphertext: list) -> str:
     # Unpack the key into its components
-    key = pk
-    n = pk
+    key, n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
     plain = [chr((char ** key) % n) for char in ciphertext]
     # Return the array of bytes as a string
