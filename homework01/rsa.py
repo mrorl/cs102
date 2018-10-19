@@ -53,7 +53,7 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    def gcd2(a: int, b: int):
+    def gcd2(a: int, b: int) -> tuple:
         if b == 0:
             return a, 1, 0
         else:
@@ -63,7 +63,7 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     return x % phi
 
 
-def generate_keypair(p: int, q: int) -> int:
+def generate_keypair(p: int, q: int) -> tuple:
     if not (is_prime(p) and is_prime(q)):
         raise ValueError('Both numbers must be prime.')
     elif p == q:
@@ -92,9 +92,10 @@ def generate_keypair(p: int, q: int) -> int:
     return ((e, n), (d, n))
 
 
-def encrypt(pk: int, plaintext: str) -> str:
+def encrypt(pk: int, plaintext: str) -> list:
     # Unpack the key into it's components
-    key, n = pk
+    key = pk
+    n = pk
     # Convert each letter in the plaintext to numbers based on
     # the character using a^b mod m
     cipher = [(ord(char) ** key) % n for char in plaintext]
@@ -102,9 +103,10 @@ def encrypt(pk: int, plaintext: str) -> str:
     return cipher
 
 
-def decrypt(pk: int, ciphertext: str) -> str:
+def decrypt(pk: int, ciphertext: list) -> str:
     # Unpack the key into its components
-    key, n = pk
+    key = pk
+    n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
     plain = [chr((char ** key) % n) for char in ciphertext]
     # Return the array of bytes as a string
