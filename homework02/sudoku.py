@@ -211,5 +211,5 @@ if __name__ == '__main__':
     for fname in ['puzzle1.txt', 'puzzle2.txt', 'puzzle3.txt']:
         grid = read_sudoku(fname)
         display(grid)
-        solution = solve(grid)
+        solution: list = solve(grid)
         display(solution)
