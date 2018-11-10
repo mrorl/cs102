@@ -1,6 +1,5 @@
 import pygame
 import random
-from copy import deepcopy
 from pygame.locals import *
 
 
@@ -64,27 +63,35 @@ class GameOfLife:
     def get_neighbours(self, cell: tuple) -> list:
         neighbours = []
         row, col = cell
-        w = self.cell_width - 1
-        h = self.cell_height - 1
-        for i in range(row - 1, row + 2):
-            for j in range(col - 1, col + 2):
-                if (i != row and j != col) and (0 <= i <= h and 0 <= j <= w):
-                    neighbours.append(self.grid[i][i])
+        rows = [row - 1, row, row + 1]
+        cols = [col - 1, col, col + 1]
+        for i in rows:
+            if 0 <= i < self.cell_height:
+                for j in cols:
+                    if j == col and i == row:
+                        continue
+                    if 0 <= j < self.cell_width:
+                        neighbours.append(self.clist[i][j])
         return neighbours
 
     def update_cell_list(self, cell_list: list) -> list:
-        new_grid = deepcopy(self.grid)
-        for i in range(self.cell_height):
-            for j in range(self.cell_width):
-                s = sum(self.get_neighbours((i, j)))
-                if self.grid[i][j]:
-                    if s < 2 or s > 3:
-                        new_grid[i][j] = 0
-                    else:
-                        if s == 3:
-                            new_grid[i][j] = 1
-        self.grid = new_grid
-        return self.grid
+        new_clist = []
+        for row in range(len(cell_list)):
+            new_clist.append([])
+            for col in range(len(cell_list[row])):
+                neighbours = self.get_neighbours((row, col))
+                sum = 0
+                for i in neighbours:
+                    if i:
+                        sum += 1
+                if cell_list[row][col] == 1 and (sum == 2 or sum == 3):
+                    new_clist[row].append(1)
+                elif cell_list[row][col] == 0 and sum == 3:
+                    new_clist[row].append(1)
+                else:
+                    new_clist[row].append(0)
+        self.clist = new_clist
+        return self.clist
 
 
 if __name__ == '__main__':
