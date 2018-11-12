@@ -131,11 +131,18 @@ class CellList:
         return self
 
     def __iter__(self):
-        self.i_s, self.j_s = 0, 0
+        self.i_row, self.i_col = 0, 0
         return self
 
     def __next__(self) -> None:
-        if ():
+        if self.i_row < self.nrows:
+            cell = self.clist[self.i_row][self.i_col]
+            self.i_col += 1
+            if self.i_col == self.ncols:
+                self.i_col = 0
+                self.i_row += 1
+            return cell
+        else:
             raise StopIteration
 
     def __str__(self) -> str:
