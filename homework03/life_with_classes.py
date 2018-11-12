@@ -55,7 +55,7 @@ class GameOfLife:
             self.draw_grid()
             
             # Отрисовка списка клеток
-            # Выполнение одного шага игры (обновление состояния ячеек
+            # Выполнение одного шага игры (обновление состояния ячеек)
             self.draw_cell_list()
             clist = CellList.update(clist)
             
@@ -138,7 +138,7 @@ class CellList:
         if ():
             raise StopIteration
 
-    def __str__(self) -> str:  # done где вызывается
+    def __str__(self) -> str:
         str = ""
         for i in range(self.nrows):
             for j in range(self.ncols):
