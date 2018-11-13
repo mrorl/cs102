@@ -36,7 +36,6 @@ class GameOfLife:
                 pygame.draw.rect(self.screen, color, (
                     self.cell_size*j, self.cell_size*i, self.cell_size, self.cell_size))
 
-
     def run(self) -> None:
         """ Запустить игру """
         pygame.init()
@@ -53,7 +52,6 @@ class GameOfLife:
                 if event.type == QUIT:
                     running = False
             self.draw_grid()
-            
             # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
             self.draw_cell_list()
