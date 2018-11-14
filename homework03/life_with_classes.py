@@ -64,12 +64,12 @@ class GameOfLife:
 class Cell:
 
     def __init__(self, row: int, col: int, state: bool =False) -> None:
-        self.alive = state
+        self.state = state
         self.row = row
         self.col = col
 
     def is_alive(self) -> bool:
-        return self.alive
+        return self.state
 
 
 class CellList:
@@ -132,15 +132,14 @@ class CellList:
         return self
 
     def __next__(self):
-        if self.i_row < self.nrows:
-            cell = self.grid[self.i_row][self.i_col]
-            self.i_col += 1
-            if self.i_col == self.ncols:
-                self.i_col = 0
-                self.i_row += 1
-            return cell
-        else:
+        if self.i_row == self.nrows:
             raise StopIteration
+        i_grid = self.grid[self.i_row][self.i_col]
+        self.i_col += 1
+        if self.i_col == self.ncols:
+            self.i_col = 0
+            self.i_row += 1
+        return i_grid
 
     def __str__(self) -> str:
         str = ""
@@ -154,27 +153,16 @@ class CellList:
         return str
 
     @classmethod
-    def from_file(cls, filename: str) -> None:
-        grid = [c for c in open(filename).read()]
-        clist = [[]]
-        c_row = 0
-        c_col = 0
-        ncol = 0
-        nrow = 0
-        for i in grid:
-            if i == '\n':
-                clist.append([])
-                c_row += 1
-                ncol = c_col
-                c_col = 0
-                continue
-            if i == '1':
-                clist[c_row].append(Cell(c_row, c_col, True))
-            if i == '0':
-                clist[c_row].append(Cell(c_row, c_col, False))
-            c_col += 1
-        nrow = c_row + 1
-        return CellList(nrow, ncol, file_clist=clist, open_file=True)
+    def from_file(cls, filename):
+        filegrid = []
+        with open(filename) as file:
+            for nrow, line in enumerate(file):
+                row = [Cell(nrow, ncol, int(state))
+                       for ncol, state in enumerate(line) if state in "01"]
+                filegrid.append(row)
+        clist = cls(len(filegrid), len(filegrid[0]))
+        clist.grid = filegrid
+        return clist
 
 
 if __name__ == '__main__':
