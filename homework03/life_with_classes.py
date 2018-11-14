@@ -55,7 +55,7 @@ class GameOfLife:
             # Выполнение одного шага игры (обновление состояния ячеек)
             self.draw_cell_list()
             self.clist.update()
-            
+
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
@@ -63,7 +63,7 @@ class GameOfLife:
 
 class Cell:
 
-    def __init__(self, row: int, col: int, state: bool =False) -> None:
+    def __init__(self, row: int, col: int, state: bool = False) -> None:
         self.state = state
         self.row = row
         self.col = col
@@ -105,9 +105,9 @@ class CellList:
                         continue
                     if 0 <= j < self.ncols:
                         if self.grid[i][j].is_alive():
-                            neighbours.append(Cell(i,j,True))
+                            neighbours.append(Cell(i, j, True))
                         else:
-                            neighbours.append(Cell(i,j,False))
+                            neighbours.append(Cell(i, j, False))
         return neighbours
 
     def update(self):
@@ -116,7 +116,7 @@ class CellList:
             for j in range(self.ncols):
                 neighbours = sum(c.is_alive() for c in self.get_neighbours(Cell(i, j)))
                 if self.grid[i][j].is_alive():
-                    if neighbours < 2 or neighbours> 3:
+                    if neighbours < 2 or neighbours > 3:
                         new_clist[i][j].state = 0
                 else:
                     if neighbours == 3:
@@ -165,3 +165,4 @@ class CellList:
 if __name__ == '__main__':
     game = GameOfLife(320, 240, 20)
     game.run()
+    
