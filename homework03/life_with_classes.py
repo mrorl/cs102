@@ -28,7 +28,7 @@ class GameOfLife:
     def draw_cell_list(self) -> None:
         for i in range(self.cell_height):
             for j in range(self.cell_width):
-                if self.grid[i][j].is_alive():
+                if self.clist.grid[i][j].is_alive():
                     color = pygame.Color('green')
                 else:
                     color = pygame.Color('white')
