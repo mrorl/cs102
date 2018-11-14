@@ -112,19 +112,16 @@ class CellList:
 
     def update(self):
         new_clist = deepcopy(self.grid)
-        sum = 0
-        for cell in self:
-            neighbours = self.get_neighbours(cell)
-            for i in neighbours:
-                if i:
-                    sum += 1
-            if cell.is_alive():
-                if sum < 2 or sum > 3:
-                    new_clist[cell.row][cell.col].alive = 0
-            else:
-                if sum == 3:
-                    new_clist[cell.row][cell.col].alive = 1
-        self.clist = new_clist
+        for i in range(self.nrows):
+            for j in range(self.ncols):
+                neighbours = sum(c.is_alive() for c in self.get_neighbours(Cell(i, j)))
+                if self.grid[i][j].is_alive():
+                    if neighbours < 2 or neighbours> 3:
+                        new_clist[i][j].state = 0
+                else:
+                    if neighbours == 3:
+                        new_clist[i][j].state = 1
+        self.grid = new_clist
         return self
 
     def __iter__(self):
