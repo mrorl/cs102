@@ -75,7 +75,7 @@ class GameOfLife:
         return neighbours
 
     def update_cell_list(self, cell_list: list) -> list:
-        new_clist = []
+        new_clist: list = []
         for row in range(len(cell_list)):
             new_clist.append([])
             for col in range(len(cell_list[row])):
