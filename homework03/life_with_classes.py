@@ -63,21 +63,21 @@ class GameOfLife:
 
 class Cell:
 
-    def __init__(self, row: int, col: int, state: bool = False) -> None:
+    def __init__(self, row: int, col: int, state: int = False) -> None:
         self.state = state
         self.row = row
         self.col = col
 
-    def is_alive(self) -> bool:
+    def is_alive(self) -> int:
         return self.state
 
 
 class CellList:
 
-    def __init__(self, nrows, ncols, randomize=False, open_file=False, file_clist=[]):
+    def __init__(self, nrows, ncols, randomize=False, open_file=False, file_clist=[]) -> None:
         self.nrows = nrows
         self.ncols = ncols
-        self.grid = []
+        self.grid: list = []
 
         if randomize:
             for i in range(self.nrows):
