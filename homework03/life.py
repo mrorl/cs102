@@ -13,7 +13,7 @@ class GameOfLife:
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
         self.speed = speed
-        self.grid = self.cell_list()
+        self.clist = self.cell_list()
 
     def draw_grid(self) -> None:
         for x in range(0, self.width, self.cell_size):
@@ -36,7 +36,7 @@ class GameOfLife:
                     running = False
             self.draw_grid()
             self.draw_cell_list(self.clist)
-            self.clist = self.update_cell_list(self.grid)
+            self.clist = self.update_cell_list(self.clist)
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
@@ -47,8 +47,8 @@ class GameOfLife:
             for i in range(self.cell_height):
                 for j in range(self.cell_width):
                     grid[i][j] = random.randint(0, 1)
-        self.grid = grid
-        return self.grid
+        self.clist = grid
+        return self.clist
 
     def draw_cell_list(self, rects: list) -> None:
         for i in range(self.cell_height):
@@ -71,7 +71,7 @@ class GameOfLife:
                     if j == col and i == row:
                         continue
                     if 0 <= j < self.cell_width:
-                        neighbours.append(self.grid[i][j])
+                        neighbours.append(self.clist[i][j])
         return neighbours
 
     def update_cell_list(self, cell_list: list) -> list:
@@ -90,8 +90,8 @@ class GameOfLife:
                     new_clist[row].append(1)
                 else:
                     new_clist[row].append(0)
-        self.grid = new_clist
-        return self.grid
+        self.clist = new_clist
+        return self.clist
 
 
 if __name__ == '__main__':
