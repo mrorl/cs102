@@ -74,7 +74,7 @@ class Cell:
 
 class CellList:
 
-    def __init__(self, nrows, ncols, randomize=False, open_file=False, file_clist=[]) -> None:
+    def __init__(self, nrows: int, ncols: int, randomize=False, open_file=False, file_clist: list=[]) -> None:
         self.nrows = nrows
         self.ncols = ncols
         self.grid: list = []
