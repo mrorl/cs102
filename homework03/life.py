@@ -71,7 +71,7 @@ class GameOfLife:
                     if j == col and i == row:
                         continue
                     if 0 <= j < self.cell_width:
-                        neighbours.append(self.clist[i][j])
+                        neighbours.append(self.grid[i][j])
         return neighbours
 
     def update_cell_list(self, cell_list: list) -> list:
@@ -90,8 +90,8 @@ class GameOfLife:
                     new_clist[row].append(1)
                 else:
                     new_clist[row].append(0)
-        self.clist = new_clist
-        return self.clist
+        self.grid = new_clist
+        return self.grid
 
 
 if __name__ == '__main__':
