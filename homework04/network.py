@@ -1,12 +1,7 @@
-import requests
 import igraph
-import numpy as np
 import time
-import datetime
 from api import get_friends
-from pprint import pprint as pp
 from igraph import Graph, plot
-
 
 
 def get_network(users_ids, as_edgelist=True):
@@ -35,7 +30,7 @@ def get_network(users_ids, as_edgelist=True):
 
 
 def plot_graph(graph):
-    vertices = [i for i in range(len(friends))]  # ['last_name'] for i in friends]  # здесь указываем колтичество вершин - кол-во друзей
+    vertices = [i for i in range(len(friends))]  # здесь указываем колтичество вершин - кол-во друзей
     edges = graph  # здесь указываем ребра графа - кто у кого в друзьях из твоих друзей
 
     # Создание графа
@@ -57,8 +52,7 @@ def plot_graph(graph):
     g.simplify(multiple=True, loops=True)
 
     # Разделяем вершины на группы по взаимосвязям
-    # communities = g.community_edge_betweenness(directed=False)
-    clusters = clusters = g.community_multilevel()  # communities.as_clustering()
+    clusters = g.community_multilevel()
     print(clusters)
 
     # Раскрашиваем разные группы вершин в разные цвета
