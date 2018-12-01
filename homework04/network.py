@@ -4,7 +4,7 @@ from api import get_friends
 from igraph import Graph, plot
 
 
-def get_network(users_ids, as_edgelist=True):
+def get_network(users_ids, as_edgelist=True) -> list:
     graph = []
     matrix = [[0 for i in range(len(users_ids))] for j in range(len(users_ids))]
 
