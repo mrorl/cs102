@@ -41,9 +41,14 @@ def get_friends(user_id: int, fields="") -> dict:
         'version': config.VK_CONFIG['version']
         }
 
-    query = "{domain}/friends.get?access_token={access_token}&user_id={user_id}&fields={fields}&v={version}".format(**query_params)
-    response = requests.get(query)  # создает модуль requests
-    return response.json()
+    query = "{domain}/friends.get?access_token={" \
+            "access_token}&user_id={user_id}&fields={fields}&v={version}".format(
+        **query_params)
+    response = get(query, query_params)
+    err = response.json().get('error')
+    if err:
+        return []
+    return response.json()['response']['items']
 
 
 def messages_get_history(user_id: int, offset: int = 0, count: int = 200) -> list:
