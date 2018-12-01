@@ -42,8 +42,11 @@ def get_friends(user_id: int, fields="") -> dict:
         }
 
     query = "{domain}/friends.get?access_token={access_token}&user_id={user_id}&fields={fields}&v={version}".format(**query_params) 
-    response = requests.get(query)  # создает модуль requests 
-    return response.json()  # ['response']['items']
+    response = get(query, query_params)  # создает модуль requests 
+    print(response.json())
+    if response.json().get('error'):
+        return []
+    return response.json()['response']['items']
 
 
 def messages_get_history(user_id: int, offset: int = 0, count: int = 200) -> list:

@@ -10,9 +10,7 @@ def get_network(users_ids, as_edgelist=True) -> list:
 
     for user1 in range(len(users_ids)):
         response = get_friends(users_ids[user1])
-        if response.get('error'):
-            continue
-        friends_list = response['response']['items']
+        friends_list = response  # ['response']['items']
         for user2 in range(user1 + 1, len(users_ids)):
             if users_ids[user2] in friends_list:
                 if as_edgelist:
@@ -30,6 +28,7 @@ def get_network(users_ids, as_edgelist=True) -> list:
 
 
 def plot_graph(graph):
+    friends = get_friends(141948816)
     vertices = [i for i in range(len(friends))]  # здесь указываем колтичество вершин - кол-во друзей
     edges = graph  # здесь указываем ребра графа - кто у кого в друзьях из твоих друзей
 
@@ -64,7 +63,8 @@ def plot_graph(graph):
 
 
 if __name__ == '__main__':
-    response = get_friends(57902269)
-    friends = response['response']['items'] 
-    graph = get_network(friends, as_edgelist=True)
+    response = get_friends(141948816)
+    print(response)
+    # friends = response['response']['items'] 
+    graph = get_network(response, as_edgelist=True)
     plot_graph(graph)
