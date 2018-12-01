@@ -13,7 +13,8 @@ def age_predict(user_id: int) -> Optional[float]:
     """
     assert isinstance(user_id, int), "user_id must be positive integer"
     assert user_id > 0, "user_id must be positive integer"
-    friends = get_friends(user_id, 'bdate')
+    response = get_friends(user_id, 'bdate')
+    friends = response['response']['items']
 
     ages = []
     friends = [User(**friend) for friend in friends]
