@@ -21,7 +21,7 @@ def get_network(users_ids, as_edgelist=True):
                     matrix[user1][user2] = 1
                     matrix[user2][user1] = 1
         time.sleep(0.4)
-        print("slept, unlike you")
+        print("Collecting data...")
        
     if as_edgelist:
         return graph
