@@ -41,8 +41,8 @@ def get_friends(user_id: int, fields="") -> dict:
         'version': config.VK_CONFIG['version']
         }
 
-    query = "{domain}/friends.get?access_token={access_token}&user_id={user_id}&fields={fields}&v={version}".format(**query_params) 
-    response = get(query, query_params)  # создает модуль requests 
+    query = "{domain}/friends.get?access_token={access_token}&user_id={user_id}&fields={fields}&v={version}".format(**query_params)
+    response = get(query, query_params)
     print(response.json())
     if response.json().get('error'):
         return []
@@ -75,10 +75,10 @@ def messages_get_history(user_id: int, offset: int = 0, count: int = 200) -> lis
 
     while count > 0:
         query = "{domain}/messages.getHistory?access_token={access_token}&user_id={user_id}&offset={offset}&count={count}&v={version}".format(**query_params)
-        response = requests.get(query)  # создает модуль requests
+        response = requests.get(query)
         count -= min(count, max_count)
         query_params['offset'] += 200
         query_params['count'] = min(count, max_count)
-        messages += response.json()['response']['items']  # формируем словарь
+        messages += response.json()['response']['items']
         time.sleep(0.4)
     return messages
