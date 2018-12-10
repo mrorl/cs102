@@ -55,7 +55,7 @@ def get_schedule(message):
         web_page = get_page(group, week)
     else:
         day, group = info
-    web_page = get_page(group)
+        web_page = get_page(group)
     if day == "/monday":
         day_num = "1"
     elif day == "/tuesday":
