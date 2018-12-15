@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 bot = telebot.TeleBot(config.BOT_CONFIG['access_token'])
 
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['start'])
 def echo(message):
     bot.send_message(message.chat.id, "Примеры команд:")
     bot.send_message(message.chat.id, "Получить расписание на указанный день:")
@@ -28,7 +28,8 @@ def echo(message):
     bot.send_message(message.chat.id, "Получить расписание на всю неделю:")
     bot.send_message(message.chat.id, "/all K3142")
 
-def get_page(group: str, week: str='') -> str:
+
+def get_page(group: str, week: str = '') -> str:
     if week:
         week = str(week) + '/'
     url = '{domain}/{group}/{week}raspisanie_zanyatiy_{group}.htm'.format(
@@ -41,7 +42,7 @@ def get_page(group: str, week: str='') -> str:
     return web_page
 
 
-def parse_schedule_for_a_day(web_page, day_num: str) -> Optional[tuple]:
+def parse_schedule_for_a_day(web_page: str, day_num: str) -> Optional[tuple]:
 
     soup = BeautifulSoup(web_page, "html5lib")
 
@@ -51,11 +52,11 @@ def parse_schedule_for_a_day(web_page, day_num: str) -> Optional[tuple]:
     # Время проведения занятий
     times_list = schedule_table.find_all("td", attrs={"class": "time"})
     times_list = [time.span.text for time in times_list]
-    
+
     # Место проведения занятий
     locations_list = schedule_table.find_all("td", attrs={"class": "room"})
     locations_list = [room.span.text for room in locations_list]
-    
+
     # Название дисциплин и имена преподавателей
     lessons_list = schedule_table.find_all("td", attrs={"class": "lesson"})
 
@@ -65,7 +66,7 @@ def parse_schedule_for_a_day(web_page, day_num: str) -> Optional[tuple]:
     return times_list, locations_list, lessons_list
 
 
-def get_week_num(week):
+def get_week_num(week: int) -> str:
     if week % 2 != 0:
         week = "2"
     else:
@@ -80,14 +81,14 @@ def get_schedule(message):
     try:
         day_num = ""
         info = message.text.split()
-    
+
         if len(info) == 3:
             day, group, week = info
             web_page = get_page(group, str(week))
         else:
             day, group = info
             week = "0"
-    
+
         if day == "/monday":
             day_num = "1"
         elif day == "/tuesday":
@@ -104,13 +105,21 @@ def get_schedule(message):
             day_num = "7"
 
         if week == "0":
-            resp = ''
-            for week in range(1,3):
-                web_page = get_page(group, str(week))
-                times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
-                for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
-                    resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
-            bot.send_message(message.chat.id, resp, parse_mode='HTML')
+            web_page = get_page(group, "1")
+            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
+            resp1 = '<b>Четная неделя:</b> \n\n'
+            for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                resp1 += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+            bot.send_message(message.chat.id, resp1, parse_mode='HTML')
+
+            web_page = get_page(group, "2")
+            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
+            resp2 = '<b>Нечетная неделя:</b> \n\n'
+            for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                resp2 += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+            if resp1 != resp2:
+                bot.send_message(message.chat.id, resp2, parse_mode='HTML')
+
         else:
             times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
             resp = ''
@@ -123,28 +132,27 @@ def get_schedule(message):
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
 
-@bot.message_handler(commands=['near'])  # берем дату с сайта, разделяем по - , разделяем по : через приведение строк к интеджеру, сравниваем в if
+@bot.message_handler(commands=['near'])
 def get_near_lesson(message):
     """ Получить ближайшее занятие """
     try:
         _, group = message.text.split()
         dt = datetime.today().date()
         dttuple = datetime.isocalendar(dt)
-        
+
         week_num = dttuple[1]
         week = get_week_num(week_num)
 
         day = dttuple[2]
-    
+
         current_time = datetime.today().time()
         c_time = str(current_time).split(":")
         c_hour = int(c_time[0])
         c_minute = int(c_time[1])
 
-
         web_page = get_page(group, week)
         times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
-        resp = ''
+        resp = '<b>Ближайшее занятие:</b> \n\n'
         for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
             class_time = str(time).split("-")
             cl_time = str(class_time[0]).split(":")
@@ -154,7 +162,7 @@ def get_near_lesson(message):
                 resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
                 break
 
-        if resp == '':
+        if resp == '<b>Ближайшее занятие:</b> \n\n':
             day += 1
             if day == 7 or day == 8:
                 day = 1
@@ -175,7 +183,6 @@ def get_near_lesson(message):
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
 
-
 @bot.message_handler(commands=['tomorrow'])
 def get_tommorow(message):
     """ Получить расписание на следующий день """
@@ -183,17 +190,17 @@ def get_tommorow(message):
         _, group = message.text.split()
         dt = datetime.today().date()
         dttuple = datetime.isocalendar(dt)
-        
+
         week_num = dttuple[1]
         week = get_week_num(week_num)
-    
+
         next_day = dttuple[2] + 1
         if next_day == 8:
             next_day = 1
 
         web_page = get_page(group, week)
         times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(next_day))
-        resp = ''
+        resp = '<b>Расписание на завтра:</b> \n\n'
         for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
             resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
         bot.send_message(message.chat.id, resp, parse_mode='HTML')
@@ -210,17 +217,17 @@ def get_all_schedule(message):
         _, group = message.text.split()
         dt = datetime.today().date()
         dttuple = datetime.isocalendar(dt)
-        
+
         week_num = dttuple[1]
         week = get_week_num(week_num)
-        web_page = get_page(group, week) 
+        web_page = get_page(group, week)
 
-        days = ("1", "2", "3", "4", "5", "6", "7")
-        # weekdays = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
-     
+        days = (1, 2, 3, 4, 5, 6, 7)
+        weekdays = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
+
         for day in days:
-            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, day)
-            resp = ''
+            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
+            resp = '<b>{}</b> \n\n'.format(weekdays[day - 1])
             for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
                 resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
             bot.send_message(message.chat.id, resp, parse_mode='HTML')
@@ -232,4 +239,3 @@ def get_all_schedule(message):
 
 if __name__ == '__main__':
     bot.polling(none_stop=True, interval=0)
-
