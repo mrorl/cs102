@@ -35,6 +35,7 @@ def get_page(group: str, week: str='') -> str:
         domain=config.BOT_CONFIG['domain'],
         week=week,
         group=group)
+    print(url)
     response = requests.get(url)
     web_page = response.text
     return web_page
@@ -86,7 +87,6 @@ def get_schedule(message):
         else:
             day, group = info
             week = "0"
-            web_page = get_page(group, week)
     
         if day == "/monday":
             day_num = "1"
@@ -103,11 +103,20 @@ def get_schedule(message):
         elif day == "/sunday":
             day_num = "7"
 
-        times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
-        resp = ''
-        for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
-            resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
-        bot.send_message(message.chat.id, resp, parse_mode='HTML')
+        if week == "0":
+            resp = ''
+            for week in range(1,3):
+                web_page = get_page(group, str(week))
+                times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
+                for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                    resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+            bot.send_message(message.chat.id, resp, parse_mode='HTML')
+        else:
+            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day_num))
+            resp = ''
+            for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+            bot.send_message(message.chat.id, resp, parse_mode='HTML')
     except AttributeError:
         bot.send_message(message.chat.id, 'Занятий нет')
     except ValueError:
@@ -207,7 +216,7 @@ def get_all_schedule(message):
         web_page = get_page(group, week) 
 
         days = ("1", "2", "3", "4", "5", "6", "7")
-        weekdays = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
+        # weekdays = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
      
         for day in days:
             times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, day)
