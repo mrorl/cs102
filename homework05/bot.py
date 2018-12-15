@@ -226,13 +226,14 @@ def get_all_schedule(message):
         weekdays = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
 
         for day in days:
-            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
-            resp = '<b>{}</b> \n\n'.format(weekdays[day - 1])
-            for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
-                resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
-            bot.send_message(message.chat.id, resp, parse_mode='HTML')
-    except AttributeError:
-        bot.send_message(message.chat.id, 'Занятий нет')
+            try:
+                times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
+                resp = '<b>{}</b> \n\n'.format(weekdays[day - 1])
+                for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                    resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+                bot.send_message(message.chat.id, resp, parse_mode='HTML')
+            except AttributeError:
+                bot.send_message(message.chat.id, 'Занятий нет')
     except ValueError:
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
