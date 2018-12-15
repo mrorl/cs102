@@ -2,3 +2,4 @@ beautifulsoup4==4.6.3
 bs4==0.0.1
 pyTelegramBotAPI==3.6.6
 requests==2.21.0
+html5lib
