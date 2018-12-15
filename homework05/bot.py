@@ -9,8 +9,24 @@ from typing import Optional, Tuple
 
 bot = telebot.TeleBot(config.BOT_CONFIG['access_token'])
 
-# weekday = ("Понедельник:", "Вторник:", "Среда:", "Четверг:", "Пятница:", "Суббота:", "Воскресенье:")
 
+@bot.message_handler(commands=['help'])
+def echo(message):
+    bot.send_message(message.chat.id, "Примеры команд:")
+    bot.send_message(message.chat.id, "Получить расписание на указанный день:")
+    bot.send_message(message.chat.id, "/monday K3142 1")
+    bot.send_message(message.chat.id, "/tuesday K3142 1")
+    bot.send_message(message.chat.id, "/wednesday K3142 1")
+    bot.send_message(message.chat.id, "/thursday K3142 1")
+    bot.send_message(message.chat.id, "/friday K3142 1")
+    bot.send_message(message.chat.id, "/saturday K3142 1")
+    bot.send_message(message.chat.id, "/sunday K3142 1")
+    bot.send_message(message.chat.id, "Получить расписание на следующий день:")
+    bot.send_message(message.chat.id, "/tomorrow K3142")
+    bot.send_message(message.chat.id, "Получить ближайшее занятие:")
+    bot.send_message(message.chat.id,  "/near K3142")
+    bot.send_message(message.chat.id, "Получить расписание на всю неделю:")
+    bot.send_message(message.chat.id, "/all K3142")
 
 def get_page(group: str, week: str='') -> str:
     if week:
@@ -98,7 +114,7 @@ def get_schedule(message):
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
 
-@bot.message_handler(commands=['near'])
+@bot.message_handler(commands=['near'])  # берем дату с сайта, разделяем по - , разделяем по : через приведение строк к интеджеру, сравниваем в if
 def get_near_lesson(message):
     """ Получить ближайшее занятие """
     try:
@@ -108,23 +124,47 @@ def get_near_lesson(message):
         
         week_num = dttuple[1]
         week = get_week_num(week_num)
-        web_page = get_page(group, week)
 
         day = dttuple[2]
-    except ValueError:
-        bot.send_message(message.chat.id, 'Введите номер группы. Повторите запрос.')
     
+        current_time = datetime.today().time()
+        c_time = str(current_time).split(":")
+        c_hour = int(c_time[0])
+        c_minute = int(c_time[1])
 
-    web_page = get_page(group, week)
-    times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
-    resp = ''
-    for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
-        try:
-            if class_time > current_time:
+
+        web_page = get_page(group, week)
+        times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
+        resp = ''
+        for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+            class_time = str(time).split("-")
+            cl_time = str(class_time[0]).split(":")
+            hour = int(cl_time[0])
+            minute = int(cl_time[1])
+            if (hour == c_hour and minute > c_minute) or (hour > c_hour):
                 resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
-        except AttributeError:
-            resp = 'У вас нет занятий в ближайшее время.'
-    bot.send_message(message.chat.id, resp, parse_mode='HTML')
+                break
+
+        if resp == '':
+            day += 1
+            if day == 7 or day == 8:
+                day = 1
+                if week == "1":
+                    week = "2"
+                else:
+                    week = "1"
+            web_page = get_page(group, week)
+            times_lst, locations_lst, lessons_lst = parse_schedule_for_a_day(web_page, str(day))
+            for time, location, lession in zip(times_lst, locations_lst, lessons_lst):
+                resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
+                break
+
+        bot.send_message(message.chat.id, resp, parse_mode='HTML')
+    except AttributeError:
+        bot.send_message(message.chat.id, 'У вас нет занятий в ближайшее время.')
+    except ValueError:
+        bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
+
 
 
 @bot.message_handler(commands=['tomorrow'])
