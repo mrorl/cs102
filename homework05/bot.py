@@ -128,6 +128,7 @@ def get_schedule(message):
             bot.send_message(message.chat.id, resp, parse_mode='HTML')
     except AttributeError:
         bot.send_message(message.chat.id, 'Занятий нет')
+
     except ValueError:
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
@@ -205,7 +206,7 @@ def get_tommorow(message):
             resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
         bot.send_message(message.chat.id, resp, parse_mode='HTML')
     except AttributeError:
-        bot.send_message(message.chat.id, 'Занятий нет')
+        bot.send_message(message.chat.id, 'Занятий нет.')
     except ValueError:
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
@@ -233,7 +234,7 @@ def get_all_schedule(message):
                     resp += '<b>{}</b>, {}, {}\n'.format(time, location, lession)
                 bot.send_message(message.chat.id, resp, parse_mode='HTML')
             except AttributeError:
-                bot.send_message(message.chat.id, 'Занятий нет')
+                bot.send_message(message.chat.id, 'Занятий нет.')
     except ValueError:
         bot.send_message(message.chat.id, 'Неверные данные. Повторите запрос.')
 
