@@ -1,7 +1,7 @@
 import string
 import math
 import copy
-# from string import maketrans
+
 
 class NaiveBayesClassifier:
 
