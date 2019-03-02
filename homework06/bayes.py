@@ -7,6 +7,7 @@ class NaiveBayesClassifier:
 
     def __init__(self, alpha=1) -> None:
         self.smoothing = alpha 
+        self.chance = [0,0,0]
 
 
     def fit(self, X, y):
@@ -19,9 +20,7 @@ class NaiveBayesClassifier:
         words = []
         words_in_table = []
 
-        lab_num0 = 0
-        lab_num1 = 0
-        lab_num2 = 0
+        lab_num = [0,0,0]
 
         translator = str.maketrans("", "", string.punctuation)  # избавимся от символов пунктуации:
         for i, st in enumerate(X):
@@ -37,13 +36,13 @@ class NaiveBayesClassifier:
 
                 if words[i][1] == 'good':
                     self.table[i][1] += 1
-                    lab_num0 += 1
+                    lab_num[0] += 1
                 elif words[i][1] == 'maybe':
                     self.table[i][2] += 1
-                    lab_num1 += 1
+                    lab_num[1] += 1
                 elif words[i][1] == 'never':
                     self.table[i][3] += 1
-                    lab_num2 += 1
+                    lab_num[2] += 1
             else:
                 idx = words_in_table.index(words[i][0])
 
@@ -54,11 +53,12 @@ class NaiveBayesClassifier:
                 elif words[idx][1] == 'never':
                     self.table[idx][3] += 1
         for i in range(len(words)):
-            self.table[i][4] = (self.table[i][1] + self.smoothing)/(lab_num0 + len(words_in_table)*self.smoothing)
-            self.table[i][5] = (self.table[i][2] + self.smoothing)/(lab_num1 + len(words_in_table)*self.smoothing)
-            self.table[i][6] = (self.table[i][3] + self.smoothing)/(lab_num2 + len(words_in_table)*self.smoothing)
+            self.table[i][4] = (self.table[i][1] + self.smoothing)/(lab_num[0] + len(words_in_table)*self.smoothing)
+            self.table[i][5] = (self.table[i][2] + self.smoothing)/(lab_num[1] + len(words_in_table)*self.smoothing)
+            self.table[i][6] = (self.table[i][3] + self.smoothing)/(lab_num[2] + len(words_in_table)*self.smoothing)
 
-        self.chance = [math.log(label/(lab_num0 + lab_num1 + lab_num2)) for label in range(len(self.labels))]
+        for i in range(3):
+            self.chance[i] = math.log(lab_num[i]/(lab_num[0] + lab_num[1] + lab_num[2]))
 
 
     def predict(self, X):
