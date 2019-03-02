@@ -12,6 +12,8 @@ class NaiveBayesClassifier:
         X - объекты News
         y - label-ы
         """
+        self.labels = [i for i in set(y)]
+        self.labels.sort()
         words = []
         words_in_table = []
 
@@ -57,7 +59,7 @@ class NaiveBayesClassifier:
 
     def predict(self, X):
         """ Perform classification on an array of test vectors X. """
-        y =  []
+        predict_label =  []
         words = []
 
         translator = str.maketrans("", "", string.punctuation) # избавимся от символов пунктуации:
@@ -68,11 +70,12 @@ class NaiveBayesClassifier:
         for words in words:
             for i in range(len(self.table)):
                 if words == self.table[i][0]:
-                    y[i] +=
-
-
+                    for label in range(len(set(y))):
+                        chance[label] += math.log(self.table[i][label+4])
+        predict_label.append(self.labels[chance.index(max(chance))])
 
         return predict_label
+
 
     def score(self, X_test, y_test):
         """ Returns the mean accuracy on the given test data and labels. """
