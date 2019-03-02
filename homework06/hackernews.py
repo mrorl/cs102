@@ -7,6 +7,7 @@ from bottle import (
 from scraputils import get_news
 from db import News, session
 from bayes import NaiveBayesClassifier
+from sqlalchemy.orm import load_only
 
 
 @route("/news")
@@ -59,10 +60,25 @@ def update_news():
 
 @route("/classify")
 def classify_news():
-    # PUT YOUR CODE HERE
+    classifier = NaiveBayesClassifier(1)
+    s = session()
+    labeled_news = s.query(News).filter(News.label != None).all()
+    x_train = [news.title for news in labeled_news]
+    y_train = [news.label for news in labeled_news]
+    classifier.fit(x_train, y_train)
 
+    new_news = s.query(News).filter(News.label == None).all()
+    good, maybe, never = [], [], []
+    for current in new_news:
+        prediction = classifier.predict(current.title)
+        if prediction == 'good':
+            good.append(current)
+        elif prediction == 'maybe':
+            maybe.append(current)
+        else:
+            never.append(current)
 
-    pass
+    return template('recommendations', good=good, maybe=maybe, never=never)
 
 
 if __name__ == "__main__":
