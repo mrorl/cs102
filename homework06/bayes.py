@@ -54,8 +54,6 @@ class NaiveBayesClassifier:
             self.table[i][5] = (self.table[i][2] + self.smoothing)/(lab_num1 + len(words_in_table)*self.smoothing)
             self.table[i][6] = (self.table[i][3] + self.smoothing)/(lab_num2 + len(words_in_table)*self.smoothing)
 
-        return(self.table)
-
 
     def predict(self, X):
         """ Perform classification on an array of test vectors X. """
