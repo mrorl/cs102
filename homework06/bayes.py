@@ -1,9 +1,11 @@
 import string
-from string import maketrans
+import math
+import copy
+# from string import maketrans
 
 class NaiveBayesClassifier:
 
-    def __init__(self, alpha) -> None:
+    def __init__(self, alpha=1) -> None:
         self.smoothing = alpha 
 
 
@@ -28,7 +30,7 @@ class NaiveBayesClassifier:
 
         self.table = [[0]*7 for _ in range(len(words))] # создаем таблицу
 
-        for i in len(words):
+        for i in range(len(words)):
             if words[i][0] not in words_in_table:
                 self.table[i][0] = words[i][0]
                 words_in_table.append(words[i][0])
@@ -38,10 +40,10 @@ class NaiveBayesClassifier:
                     lab_num0 += 1
                 elif words[i][1] == 'maybe':
                     self.table[i][2] += 1
-                    lab_num2 += 1
+                    lab_num1 += 1
                 elif words[i][1] == 'never':
                     self.table[i][3] += 1
-                    lab_num3 += 1
+                    lab_num2 += 1
             else:
                 idx = words_in_table.index(words[i][0])
 
@@ -51,10 +53,12 @@ class NaiveBayesClassifier:
                     self.table[idx][2] += 1
                 elif words[idx][1] == 'never':
                     self.table[idx][3] += 1
-        for i in len(words):
+        for i in range(len(words)):
             self.table[i][4] = (self.table[i][1] + self.smoothing)/(lab_num0 + len(words_in_table)*self.smoothing)
             self.table[i][5] = (self.table[i][2] + self.smoothing)/(lab_num1 + len(words_in_table)*self.smoothing)
             self.table[i][6] = (self.table[i][3] + self.smoothing)/(lab_num2 + len(words_in_table)*self.smoothing)
+
+        self.chance = [math.log(label/(lab_num0 + lab_num1 + lab_num2)) for label in range(len(self.labels))]
 
 
     def predict(self, X):
@@ -67,10 +71,11 @@ class NaiveBayesClassifier:
             for word in i.translate(translator).lower().split():  # приведем к нижнему регистру и разделим
                 words.append(word)  # формируем словарь
 
-        for words in words:
+        for word in words:
+            chance = copy.deepcopy(self.chance)
             for i in range(len(self.table)):
-                if words == self.table[i][0]:
-                    for label in range(len(set(y))):
+                if word == self.table[i][0]:
+                    for label in range(len(self.labels)):
                         chance[label] += math.log(self.table[i][label+4])
         predict_label.append(self.labels[chance.index(max(chance))])
 
