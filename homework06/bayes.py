@@ -29,7 +29,7 @@ class NaiveBayesClassifier:
         self.table = [[0]*7 for _ in range(len(words))] # создаем таблицу
 
         for i in len(words):
-            if words[i][0] is not in words_in_table:
+            if words[i][0] not in words_in_table:
                 self.table[i][0] = words[i][0]
                 words_in_table.append(words[i][0])
 
