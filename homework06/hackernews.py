@@ -80,8 +80,7 @@ def classify_news():
             maybe.append(current)
         elif prediction == ['never']:
             never.append(current)
-        if i == 300:
-            break
+
 
     return template('recommendations', good=good, maybe=maybe, never=never)
 
