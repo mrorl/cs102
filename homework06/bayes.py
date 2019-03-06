@@ -27,6 +27,7 @@ class NaiveBayesClassifier:
             for word in st.translate(translator).lower().split(): # приведем к нижнему регистру и разделим
                 words.append([word, y[i]])  # формируем список слов и лейблов при них
 
+
         self.table = [[0]*7 for _ in range(len(words))] # создаем таблицу
 
         for i in range(len(words)):
@@ -66,10 +67,8 @@ class NaiveBayesClassifier:
         predict_label =  []
         words = []
 
-        translator = str.maketrans("", "", string.punctuation) # избавимся от символов пунктуации:
-        for i in X:
-            for word in i.translate(translator).lower().split():  # приведем к нижнему регистру и разделим
-                words.append(word)  # формируем словарь
+        for st in X.split():
+            words.append(st)
 
         for word in words:
             chance = copy.deepcopy(self.chance)
