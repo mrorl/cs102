@@ -1,15 +1,12 @@
 import bottle
-bottle.TEMPLATE_PATH.insert(0,'views')
 from bottle import (
     route, run, template, request, redirect
 )
-
 from scraputils import get_news
 from db import News, session
 from bayes import NaiveBayesClassifier
-# from sqlalchemy.orm import load_only
 import string
-
+bottle.TEMPLATE_PATH.insert(0, 'views')
 
 
 @route("/news")
@@ -71,7 +68,7 @@ def classify_news():
 
     new_news = s.query(News).filter(News.label == None).all()
     good, maybe, never = [], [], []
-    for i,current in enumerate(new_news):
+    for current in new_news:
         prediction = classifier.predict(current.title)
 
         if prediction == ['good']:
@@ -81,10 +78,8 @@ def classify_news():
         elif prediction == ['never']:
             never.append(current)
 
-
     return template('recommendations', good=good, maybe=maybe, never=never)
 
 
 if __name__ == '__main__':
     run(host="localhost", port=8080)
-

@@ -6,12 +6,11 @@ import copy
 class NaiveBayesClassifier:
 
     def __init__(self, alpha=1) -> None:
-        self.smoothing = alpha 
-        self.chance = [0,0,0]
-
+        self.smoothing = alpha
+        self.chance = [0, 0, 0]
 
     def fit(self, X, y):
-        """ Fit Naive Bayes classifier according to X, y. 
+        """ Fit Naive Bayes classifier according to X, y.
         X - объекты News
         y - label-ы
         """
@@ -20,15 +19,14 @@ class NaiveBayesClassifier:
         words = []
         words_in_table = []
 
-        lab_num = [0,0,0]
+        lab_num = [0, 0, 0]
 
         translator = str.maketrans("", "", string.punctuation)  # избавимся от символов пунктуации:
         for i, st in enumerate(X):
-            for word in st.translate(translator).lower().split(): # приведем к нижнему регистру и разделим
+            for word in st.translate(translator).lower().split():  # приведем к нижнему регистру и разделим
                 words.append([word, y[i]])  # формируем список слов и лейблов при них
 
-
-        self.table = [[0]*7 for _ in range(len(words))] # создаем таблицу
+        self.table = [[0]*7 for _ in range(len(words))]  # создаем таблицу
 
         for i in range(len(words)):
             if words[i][0] not in words_in_table:
@@ -61,10 +59,9 @@ class NaiveBayesClassifier:
         for i in range(3):
             self.chance[i] = math.log(lab_num[i]/(lab_num[0] + lab_num[1] + lab_num[2]))
 
-
     def predict(self, X):
         """ Perform classification on an array of test vectors X. """
-        predict_label =  []
+        predict_label = []
         words = []
 
         for st in X.split():
@@ -79,7 +76,6 @@ class NaiveBayesClassifier:
         predict_label.append(self.labels[chance.index(max(chance))])
 
         return predict_label
-
 
     def score(self, X_test, y_test):
         """ Returns the mean accuracy on the given test data and labels. """
