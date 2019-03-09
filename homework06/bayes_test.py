@@ -1,6 +1,6 @@
 import csv
 import string
-from bayes import NaiveBayesClassifier
+from ham_spam import NaiveBayesClassifier
 
 
 def clean(s):
