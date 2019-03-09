@@ -8,25 +8,40 @@ class NaiveBayesClassifier:
     def __init__(self, alpha=1) -> None:
         self.smoothing = alpha
         self.chance = [0, 0, 0]
+        self.labels = []
+        self.table = []
 
     def fit(self, X, y):
-        """ Fit Naive Bayes classifier according to X, y.
-        X - объекты News
-        y - label-ы
-        """
-        self.labels = [i for i in set(y)]
-        self.labels.sort()
+        """ Fit Naive Bayes classifier according to X, y."""
         words = []
         words_in_table = []
+        labeled_news = [0, 0, 0]  # сколько новостей отмечены good, maybe, never
+        lab_num = [0, 0, 0]  # число слов относящихся к good, maybe, never
+        self.labels = [i for i in set(y)]
+        self.labels.sort()
 
-        lab_num = [0, 0, 0]
+        '''Найдем ln от априорных вероятностей классов good, maybe, never'''
 
-        translator = str.maketrans("", "", string.punctuation)  # избавимся от символов пунктуации:
+        for i in range(len(X)):
+            if y[i] == 'good':
+                labeled_news[0] += 1
+            elif y[i] == 'maybe':
+                labeled_news[1] += 1
+            elif y[i] == 'never':
+                labeled_news[2] += 1
+        for i in range(3):
+            self.chance[i] = math.log(labeled_news[i]/len(X))
+
+        '''Приведем все сообщения к нижнему регистру и избавимся от символов пунктуации и разделим'''                       
+
+        translator = str.maketrans("", "", string.punctuation)
         for i, st in enumerate(X):
-            for word in st.translate(translator).lower().split():  # приведем к нижнему регистру и разделим
-                words.append([word, y[i]])  # формируем список слов и лейблов при них
+            for word in st.translate(translator).lower().split():
+                words.append([word, y[i]])
 
-        self.table = [[0]*7 for _ in range(len(words))]  # создаем таблицу
+        '''Создаем таблицу, заполняем первые 4 столбца'''
+
+        self.table = [[0]*7 for _ in range(len(words))]
 
         for i in range(len(words)):
             if words[i][0] not in words_in_table:
@@ -47,17 +62,21 @@ class NaiveBayesClassifier:
 
                 if words[idx][1] == 'good':
                     self.table[idx][1] += 1
+                    lab_num[0] += 1
                 elif words[idx][1] == 'maybe':
                     self.table[idx][2] += 1
+                    lab_num[1] += 1
                 elif words[idx][1] == 'never':
                     self.table[idx][3] += 1
-        for i in range(len(words)):
-            self.table[i][4] = (self.table[i][1] + self.smoothing)/(lab_num[0] + len(words_in_table)*self.smoothing)
-            self.table[i][5] = (self.table[i][2] + self.smoothing)/(lab_num[1] + len(words_in_table)*self.smoothing)
-            self.table[i][6] = (self.table[i][3] + self.smoothing)/(lab_num[2] + len(words_in_table)*self.smoothing)
+                    lab_num[2] += 1
 
-        for i in range(3):
-            self.chance[i] = math.log(lab_num[i]/(lab_num[0] + lab_num[1] + lab_num[2]))
+        '''Вычисляем вероятность встретить слово в каждом из классов'''
+        
+        for i in range(len(words)):
+            self.table[i][4] = math.log(((self.table[i][1] + self.smoothing)/(lab_num[0] + len(words_in_table)*self.smoothing)))
+            self.table[i][5] = math.log(((self.table[i][2] + self.smoothing)/(lab_num[1] + len(words_in_table)*self.smoothing)))
+            self.table[i][6] = math.log(((self.table[i][3] + self.smoothing)/(lab_num[2] + len(words_in_table)*self.smoothing)))
+
 
     def predict(self, X):
         """ Perform classification on an array of test vectors X. """
@@ -72,7 +91,7 @@ class NaiveBayesClassifier:
             for i in range(len(self.table)):
                 if word == self.table[i][0]:
                     for label in range(len(self.labels)):
-                        chance[label] += math.log(self.table[i][label+4])
+                        chance[label] += self.table[i][label+4]
         predict_label.append(self.labels[chance.index(max(chance))])
 
         return predict_label
