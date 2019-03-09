@@ -73,9 +73,9 @@ class NaiveBayesClassifier:
         '''Вычисляем вероятность встретить слово в каждом из классов'''
         
         for i in range(len(words)):
-            self.table[i][4] = math.log(((self.table[i][1] + self.smoothing)/(lab_num[0] + len(words_in_table)*self.smoothing)))
-            self.table[i][5] = math.log(((self.table[i][2] + self.smoothing)/(lab_num[1] + len(words_in_table)*self.smoothing)))
-            self.table[i][6] = math.log(((self.table[i][3] + self.smoothing)/(lab_num[2] + len(words_in_table)*self.smoothing)))
+            self.table[i][4] = math.log((self.table[i][1] + self.smoothing)/(lab_num[0] + len(words_in_table)*self.smoothing))
+            self.table[i][5] = math.log((self.table[i][2] + self.smoothing)/(lab_num[1] + len(words_in_table)*self.smoothing))
+            self.table[i][6] = math.log((self.table[i][3] + self.smoothing)/(lab_num[2] + len(words_in_table)*self.smoothing))
 
 
     def predict(self, X):
