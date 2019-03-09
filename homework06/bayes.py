@@ -16,7 +16,7 @@ class NaiveBayesClassifier:
         words = []
         words_in_table = []
         labeled_news = [0, 0, 0]  # сколько новостей отмечены good, maybe, never
-        lab_num = [0, 0, 0]  # число слов относящихся к good, maybe, never
+        lab_num = [0, 0, 0]  # сколько раз встречаются слова, относящиеся к good, maybe, never
         self.labels = [i for i in set(y)]
         self.labels.sort()
 
