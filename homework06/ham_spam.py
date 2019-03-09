@@ -18,7 +18,7 @@ class NaiveBayesClassifier:
         words = []
         words_in_table = []
         news_labeled = [0, 0]  # сколько новостей отмечены ham, spam
-        lab_num = [0, 0]  # число слов относящихся к ham, spam
+        lab_num = [0, 0]  # сколько раз встречаются слова, относящиеся к ham, spam
 
         '''Найдем ln от априорных вероятностей классов ham, spam'''
         
