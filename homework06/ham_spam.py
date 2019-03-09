@@ -17,10 +17,10 @@ class NaiveBayesClassifier:
         self.labels.sort()
         words = []
         words_in_table = []
-        news_labeled = [0, 0]  # сколько новостей отмечены good, maybe, never
-        lab_num = [0, 0]  # число слов относящихся к good, maybe, never
+        news_labeled = [0, 0]  # сколько новостей отмечены ham, spam
+        lab_num = [0, 0]  # число слов относящихся к ham, spam
 
-        '''Найдем ln от априорных вероятностей классов good, maybe, never'''
+        '''Найдем ln от априорных вероятностей классов ham, spam'''
         
         for i in range(len(X)):
             if y[i] == 'ham':
